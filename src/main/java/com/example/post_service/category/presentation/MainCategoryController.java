@@ -3,9 +3,11 @@ package com.example.post_service.category.presentation;
 import com.example.post_service.category.application.MainCategoryService;
 import com.example.post_service.category.dto.in.MainCategoryReqDto;
 import com.example.post_service.category.dto.out.MainCategoryResDto;
+import com.example.post_service.category.dto.out.MainCategoryWithSubCategoriesDto;
 import com.example.post_service.category.dto.out.SimpleSubCategoryResDto;
 import com.example.post_service.category.vo.in.MainCategoryReqVo;
 import com.example.post_service.category.vo.out.MainCategoryResVo;
+import com.example.post_service.category.vo.out.MainCategoryWithSubCategoriesVo;
 import com.example.post_service.common.entity.BaseResponseEntity;
 import com.example.post_service.common.response.BaseResponseStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -150,6 +152,83 @@ public class MainCategoryController {
                 mainCategoryService.getAllMainCategory()
                         .stream()
                         .map(MainCategoryResDto::toVo)
+                        .toList());
+    }
+
+    @Operation(
+        summary = "메인 카테고리별 서브카테고리 전체 조회",
+        description = """
+            모든 메인 카테고리와 각각에 속한 서브카테고리 리스트를 조회합니다.
+            
+            ### 응답 정보
+            - 메인 카테고리 정보 (ID, 이름, 아이콘, 대체 텍스트)
+            - 각 메인 카테고리별 서브카테고리 리스트 (ID, 이름, 색상)
+            
+            ### 사용 사례
+            - 카테고리 선택 UI 구성
+            - 계층형 카테고리 구조 표시
+            - 카테고리별 게시글 필터링
+            """
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "메인 카테고리별 서브카테고리 조회 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = BaseResponseEntity.class),
+                examples = @ExampleObject(
+                    name = "성공 응답",
+                    value = """
+                        {
+                            "isSuccess": true,
+                            "code": 200,
+                            "message": "요청에 성공하였습니다.",
+                            "result": [
+                                {
+                                    "mainCategoryId": 1,
+                                    "mainCategoryName": "프로그래밍",
+                                    "iconUrl": "https://example.com/icons/programming.png",
+                                    "alt": "프로그래밍 아이콘",
+                                    "subCategories": [
+                                        {
+                                            "subCategoryId": 10,
+                                            "subCategoryName": "Spring Boot",
+                                            "color": "#FF6B6B"
+                                        },
+                                        {
+                                            "subCategoryId": 11,
+                                            "subCategoryName": "React",
+                                            "color": "#4ECDC4"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "mainCategoryId": 2,
+                                    "mainCategoryName": "디자인",
+                                    "iconUrl": "https://example.com/icons/design.png",
+                                    "alt": "디자인 아이콘",
+                                    "subCategories": [
+                                        {
+                                            "subCategoryId": 20,
+                                            "subCategoryName": "UI/UX",
+                                            "color": "#45B7D1"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                        """
+                )
+            )
+        )
+    })
+    @GetMapping("/main/with-subcategories")
+    public BaseResponseEntity<List<MainCategoryWithSubCategoriesVo>> getAllMainCategoriesWithSubCategories() {
+        return new BaseResponseEntity<>(
+                mainCategoryService.getAllMainCategoriesWithSubCategories()
+                        .stream()
+                        .map(MainCategoryWithSubCategoriesVo::from)
                         .toList());
     }
 

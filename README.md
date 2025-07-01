@@ -43,6 +43,7 @@
 #### 2. MainCategory API (`/api/v1/category/main`)
 - `POST /main` - 메인 카테고리 생성
 - `GET /main` - 메인 카테고리 전체 조회
+- `GET /main/with-subcategories` - 메인 카테고리별 서브카테고리 전체 조회
 - `GET /main/{id}` - 메인 카테고리 단건 조회
 - `PUT /main/{id}` - 메인 카테고리 수정
 
@@ -59,6 +60,50 @@
 - `GET /{id}` - 카테고리 리스트 단건 조회
 - `DELETE /{id}` - 카테고리 리스트 삭제
 - `GET /main/{id}` - 메인 카테고리별 하위 카테고리 조회
+
+### API 응답 예시
+
+#### 메인 카테고리별 서브카테고리 조회 응답
+```json
+{
+  "isSuccess": true,
+  "code": 200,
+  "message": "요청에 성공하였습니다.",
+  "result": [
+    {
+      "mainCategoryId": 1,
+      "mainCategoryName": "프로그래밍",
+      "iconUrl": "https://example.com/icons/programming.png",
+      "alt": "프로그래밍 아이콘",
+      "subCategories": [
+        {
+          "subCategoryId": 10,
+          "subCategoryName": "Spring Boot",
+          "color": "#FF6B6B"
+        },
+        {
+          "subCategoryId": 11,
+          "subCategoryName": "React",
+          "color": "#4ECDC4"
+        }
+      ]
+    },
+    {
+      "mainCategoryId": 2,
+      "mainCategoryName": "디자인",
+      "iconUrl": "https://example.com/icons/design.png",
+      "alt": "디자인 아이콘",
+      "subCategories": [
+        {
+          "subCategoryId": 20,
+          "subCategoryName": "UI/UX",
+          "color": "#45B7D1"
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## 🔐 인증
 
@@ -109,6 +154,18 @@ CREATE TABLE sub_category (
     sub_category_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sub_category_name VARCHAR(100) NOT NULL,
     color VARCHAR(7) NOT NULL,
+    created_at DATETIME(0) NOT NULL,
+    updated_at DATETIME(0) NOT NULL
+);
+
+-- CategoryList (메인-서브 카테고리 매핑)
+CREATE TABLE category_list (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    main_category_id BIGINT NOT NULL,
+    main_category_name VARCHAR(100) NOT NULL,
+    sub_category_id BIGINT NOT NULL,
+    sub_category_name VARCHAR(100) NOT NULL,
+    sub_category_color VARCHAR(7) NOT NULL,
     created_at DATETIME(0) NOT NULL,
     updated_at DATETIME(0) NOT NULL
 );
