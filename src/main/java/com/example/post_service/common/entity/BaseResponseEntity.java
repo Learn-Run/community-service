@@ -1,10 +1,27 @@
 package com.example.post_service.common.entity;
 
 import com.example.post_service.common.response.BaseResponseStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-public record BaseResponseEntity<T>(HttpStatusCode httpStatus, Boolean isSuccess, String message, int code, T result) {
+@Schema(description = "공통 API 응답 모델")
+public record BaseResponseEntity<T>(
+    @Schema(description = "HTTP 상태 코드", example = "200")
+    HttpStatusCode httpStatus,
+    
+    @Schema(description = "요청 성공 여부", example = "true")
+    Boolean isSuccess,
+    
+    @Schema(description = "응답 메시지", example = "요청에 성공하였습니다.")
+    String message,
+    
+    @Schema(description = "응답 코드", example = "200")
+    int code,
+    
+    @Schema(description = "응답 데이터")
+    T result
+) {
 
     /**
      * 필요값 : Http상태코드, 성공여부, 메시지, 에러코드, 결과값
